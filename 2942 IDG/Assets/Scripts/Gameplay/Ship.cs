@@ -6,16 +6,19 @@ using UnityEngine.Animations;
 public class Ship : MonoBehaviour
 {
     public Bullet bulletPrefab;
+    public Explotion explotionPrefab;
     public float speed;
-    public Vector3 offsetForBulletSpawn = new Vector3(0, 2.0f);
+    public Vector3 offsetForBulletSpawn;
     public float timeBetweenShots;
     bool canShoot = true;
     Vector2 levelLimitsMin;
     Vector2 levelLimitsMax;
-
+    public float energy;
+    float energyLostOnCollision;
     void Awake()
     {
         FindObjectOfType<Level>().PassLimitsToShip = GetLimits;
+        StartCoroutine(LoseEnergy());
     }
 
     void Update()
@@ -37,6 +40,11 @@ public class Ship : MonoBehaviour
             Instantiate(bulletPrefab, transform.position + offsetForBulletSpawn, Quaternion.identity).levelLimit = levelLimitsMax.y;
             StartCoroutine(Reload());
         }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            Instantiate(explotionPrefab, transform);
+        }
     }
 
     IEnumerator Reload()
@@ -46,9 +54,30 @@ public class Ship : MonoBehaviour
         canShoot = true;
     }
 
+    IEnumerator LoseEnergy()
+    {
+        while (energy > 0)
+        {
+            energy -= 1;
+            CheckEnergy();
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
     public void GetLimits(Vector2 minLimit, Vector2 maxLimit)
     {
         levelLimitsMin = minLimit;
         levelLimitsMax = maxLimit;
+    }
+
+    void CheckEnergy()
+    {
+        if (energy <= 0)
+            Debug.Log("RUN OUT OF ENERGY! GAME OVER");
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        energy -= energyLostOnCollision;
     }
 }
