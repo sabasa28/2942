@@ -24,6 +24,7 @@ public class Ship : MonoBehaviour
     {
         FindObjectOfType<Level>().PassLimitsToShip = GetLimits;
         StartCoroutine(LoseEnergy());
+        StartCoroutine(CheckWin());
     }
 
     void Update()
@@ -92,6 +93,14 @@ public class Ship : MonoBehaviour
         yield return new WaitForSeconds(powerShotsDuration);
         poweredShots = false;
     }
+
+    IEnumerator CheckWin()
+    {
+        yield return new WaitForSeconds(35.0f);
+        Debug.Log("YOU FINISHED! YOU WON");
+        SceneManager.LoadScene(2);
+    }
+
     public void GetLimits(Vector2 minLimit, Vector2 maxLimit)
     {
         levelLimitsMin = minLimit;
