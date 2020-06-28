@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - PlayerBullet
+  - Power Item
+  - Energy Item
+  - Enemy
+  - Enemy Bullet
+  - Explotion
   layers:
   - Default
   - TransparentFX

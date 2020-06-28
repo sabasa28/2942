@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
+using UnityEngine.SceneManagement;
 
 public class Ship : MonoBehaviour
 {
@@ -11,10 +12,14 @@ public class Ship : MonoBehaviour
     public Vector3 offsetForBulletSpawn;
     public float timeBetweenShots;
     bool canShoot = true;
+    public float energy;
+    const float powerShotsDuration = 10.0f;
+    bool poweredShots = false;
+    Coroutine PowerBuff = null;
     Vector2 levelLimitsMin;
     Vector2 levelLimitsMax;
-    public float energy;
-    float energyLostOnCollision;
+    float energyLostOnCollision = 10;
+    int bombs = 1;
     void Awake()
     {
         FindObjectOfType<Level>().PassLimitsToShip = GetLimits;
@@ -35,15 +40,32 @@ public class Ship : MonoBehaviour
         if (newPos.y > levelLimitsMin.y && newPos.y < levelLimitsMax.y)
             transform.position += new Vector3(0, movement.y);
 
-        if (Input.GetKey(KeyCode.Space) && canShoot)
+        if (Input.GetKey(KeyCode.Space) && canShoot && Time.timeScale != 0)
         {
-            Instantiate(bulletPrefab, transform.position + offsetForBulletSpawn, Quaternion.identity).levelLimit = levelLimitsMax.y;
+            Bullet bulletInstance = Instantiate(bulletPrefab, transform.position + offsetForBulletSpawn, Quaternion.identity);
+            bulletInstance.levelLimit = levelLimitsMax.y;
+            if (poweredShots) bulletInstance.transform.localScale *= 2;
             StartCoroutine(Reload());
         }
 
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Z) && Time.timeScale != 0 && bombs > 0)
         {
-            Instantiate(explotionPrefab, transform);
+            Instantiate(explotionPrefab, transform.position, Quaternion.identity);
+            bombs--;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (Time.timeScale != 0)
+            {
+                Time.timeScale = 0;
+                SceneManager.LoadScene(3, LoadSceneMode.Additive);
+            }
+            else
+            {
+                Time.timeScale = 1;
+                SceneManager.UnloadSceneAsync(3);
+            }
         }
     }
 
@@ -64,6 +86,12 @@ public class Ship : MonoBehaviour
         }
     }
 
+    IEnumerator PowerShots()
+    {
+        poweredShots = true;
+        yield return new WaitForSeconds(powerShotsDuration);
+        poweredShots = false;
+    }
     public void GetLimits(Vector2 minLimit, Vector2 maxLimit)
     {
         levelLimitsMin = minLimit;
@@ -73,11 +101,30 @@ public class Ship : MonoBehaviour
     void CheckEnergy()
     {
         if (energy <= 0)
+        {
             Debug.Log("RUN OUT OF ENERGY! GAME OVER");
+            SceneManager.LoadScene(2);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        energy -= energyLostOnCollision;
+        if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Enemy Bullet"))
+        {
+            energy -= energyLostOnCollision;
+            CheckEnergy();
+        }
+        if (collision.gameObject.CompareTag("Power Item"))
+        {
+            if (PowerBuff != null)
+                StopCoroutine(PowerBuff);
+            PowerBuff = StartCoroutine(PowerShots());
+        }
+        if (collision.gameObject.CompareTag("Energy Item"))
+        {
+            energy += 20;  
+        }
     }
+
+    
 }

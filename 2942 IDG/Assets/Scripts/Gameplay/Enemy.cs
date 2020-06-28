@@ -8,12 +8,14 @@ public class Enemy : MonoBehaviour
     public Vector3 offsetForBulletSpawn;
     public EnemyBullet bulletPrefab;
     float minTimeBetweenShots = 2.0f;
-    float maxTimeBetweenShots = 2.0f;
+    float maxTimeBetweenShots = 4.0f;
     float levelLimit;
+    public Item itemEnergyPrefab;
+    public Item itemPowerPrefab;
+    bool destroyedByPlayer = false;
 
     private void Awake()
     {
-        FindObjectOfType<Level>().PassLimitsToEnemy = GetLimits;
         StartCoroutine(Shoot());
     }
     private void Start()
@@ -30,7 +32,24 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
+    private void OnDestroy()
+    {
+        if (!destroyedByPlayer) return;
+        int randomItemSpawn = Random.Range(0, 5);
+        switch (randomItemSpawn)
+        {
+            case 0:
+            case 1:
+                Instantiate(itemEnergyPrefab, transform.position, Quaternion.identity);
+                break;
+            case 2:
+            case 3:
+                Instantiate(itemPowerPrefab, transform.position, Quaternion.identity);
+                break;
+            default:
+                break;
+        }
+    }
     IEnumerator Shoot()
     {
         while (true)
@@ -41,8 +60,11 @@ public class Enemy : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Player")|| collision.gameObject.CompareTag("PlayerBullet"))
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("PlayerBullet") || collision.gameObject.CompareTag("Explotion"))
+        {
+            destroyedByPlayer = true;
             Destroy(gameObject);
+        }
     }
 
     public void GetLimits(float minLimit)

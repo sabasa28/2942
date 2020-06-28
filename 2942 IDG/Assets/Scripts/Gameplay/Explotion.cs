@@ -36,5 +36,6 @@ public class Explotion : MonoBehaviour
             sr.color = Color.Lerp(targetCol, origCol, t);
             yield return null;
         }
+        Destroy(gameObject);
     }
 }

@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 4440382417780411702}
   - component: {fileID: 747424170310595937}
   - component: {fileID: 7060682132570176841}
+  - component: {fileID: 3290705975702443687}
   m_Layer: 0
   m_Name: Explotion
-  m_TagString: Untagged
+  m_TagString: Explotion
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -69,7 +70,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: -1
   m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
@@ -93,3 +94,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a63344f4ed371c4889ddda8dcecceff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!61 &3290705975702443687
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850329116376484843}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.0021767616, y: -0.050330162}
+  m_SpriteTilingProperty:
+    border: {x: 0.049999997, y: 0.049999997, z: 0.049999997, w: 0.049999997}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.16, y: 0.16}
+    newSize: {x: 20, y: 20}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 1
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 20.0037, y: 19.987112}
+  m_EdgeRadius: 0
